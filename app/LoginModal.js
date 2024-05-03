@@ -34,7 +34,7 @@ const LoginModal = ({ onClose, onLoginSuccess }) => {
         console.log("Login successful!");
         onLoginSuccess();
         setTimeout(() => {
-          router.push("/");
+          router.push("/home");
           onClose();
         }, 2000);
       } else {

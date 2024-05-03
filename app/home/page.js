@@ -1,18 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchListings } from "../lib/api"; // Assuming api.js is in the same directory
+import { fetchListings } from "../../lib/api";
 import Link from "next/link";
 
 const Home = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
     const getListings = async () => {
       try {
         const data = await fetchListings();
+        console.log(data)
         setListings(data);
         setLoading(false);
       } catch (error) {
@@ -47,7 +47,7 @@ const Home = () => {
         />
         <div className="flex flex-wrap gap-8 p-4">
           {filteredListings.map((listing) => (
-            <Link key={listing.id} href="/listingId/[id]" as={`/listingId/${listing.id}`}>
+            <Link key={listing.id} href="/home/listingid/[id]" as={`/listingid/${listing.id}`}>
               <div
                 key={listing.id}
                 className="venue-card flex flex-col flex-auto shadow bg-white cursor-pointer w-80"

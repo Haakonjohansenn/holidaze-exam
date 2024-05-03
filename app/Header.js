@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 p-6 bg-white border-b border-solid border-slate-300 shadow-md z-50 text-2xl sm:text-3xl md:text-4xl sm:p-8 flex items-center justify-between">
-      <Link href="/">
+      <Link href="/home">
         <h1 className="uppercase cursor-pointer">Holidaze</h1>
       </Link>
       <div className="relative grid cursor-pointer group place-items-center">

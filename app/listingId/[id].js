@@ -1,6 +1,5 @@
-// pages/listing/[id].js
-
-import { useRouter } from 'next/navigation';
+"use client"
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { fetchListingById } from '../../lib/api';
 
@@ -16,10 +15,7 @@ const ListingPage = () => {
       try {
         const data = await fetchListingById(id);
         setListing(data);
-        setLoading(false);
       } catch (error) {
-        console.error(error);
-        setLoading(false);
         setError(error.message || 'Failed to fetch listing');
       }
     };
@@ -28,10 +24,6 @@ const ListingPage = () => {
       fetchListing();
     }
   }, [id]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>Error: {error}</div>;
