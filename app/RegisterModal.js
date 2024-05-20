@@ -52,13 +52,13 @@ const Modal = ({ onClose }) => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (!validateForm()) {
       return;
     }
-  
+
     setMessage("");
-  
+
     const { success, error } = await registerUser(
       name,
       email,
@@ -67,18 +67,18 @@ const Modal = ({ onClose }) => {
       avatarFile,
       venueManager
     );
-  
+
     console.log("Register user response:", success, error); // Log the response from registerUser
-  
+
     if (success) {
       setMessage("Registration successful! Redirecting to homepage...");
       setTimeout(() => {
-        router.push("/");
+        router.push("/home");
         onClose(); // Close the modal
       }, 2000);
     } else {
       console.error("Registration failed:", error);
-  
+
       if (Array.isArray(error)) {
         // Display each error message from the array
         setMessage(`Registration failed: ${error.join(", ")}`);
@@ -92,13 +92,18 @@ const Modal = ({ onClose }) => {
   };
 
   return (
-    <div id="modal-overlay" className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-20">
+    <div
+      id="modal-overlay"
+      className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-20"
+    >
       <div className="bg-white p-8 rounded-lg w-2/3">
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <form onSubmit={onSubmit}>
           <div className="mb-4">
             <input
-              className={`w-full p-3 text-sm border rounded-lg h-10 ${errors.name ? "border-red-500" : ""}`}
+              className={`w-full p-3 text-sm border rounded-lg h-10 ${
+                errors.name ? "border-red-500" : ""
+              }`}
               type="text"
               placeholder="Name"
               id="name"
@@ -107,11 +112,15 @@ const Modal = ({ onClose }) => {
               onChange={(e) => setName(e.target.value)}
               required
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
+            )}
           </div>
           <div className="mb-4">
             <input
-              className={`w-full p-3 text-sm border rounded-lg h-10 ${errors.email ? "border-red-500" : ""}`}
+              className={`w-full p-3 text-sm border rounded-lg h-10 ${
+                errors.email ? "border-red-500" : ""
+              }`}
               type="text"
               placeholder="Email"
               id="email"
@@ -120,11 +129,15 @@ const Modal = ({ onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
           </div>
           <div className="mb-4">
             <input
-              className={`w-full p-3 border rounded-lg h-10 text-sm ${errors.password ? "border-red-500" : ""}`}
+              className={`w-full p-3 border rounded-lg h-10 text-sm ${
+                errors.password ? "border-red-500" : ""
+              }`}
               type="password"
               placeholder="Password"
               id="password"
@@ -133,7 +146,9 @@ const Modal = ({ onClose }) => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="avatarURL">
@@ -149,7 +164,10 @@ const Modal = ({ onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="avatarFile">
+            <label
+              className="block text-sm font-bold mb-2"
+              htmlFor="avatarFile"
+            >
               Avatar File (Optional)
             </label>
             <input
@@ -161,16 +179,14 @@ const Modal = ({ onClose }) => {
             />
           </div>
           <div className="mb-4 gap-6 flex flex-row mx-auto">
-            <label className="text-sm text-nowrap">
-              Venue Manager?
-            </label>
+            <label className="text-sm text-nowrap">Venue Manager?</label>
             <input
               className="border rounded-lg text-sm mx-auto"
               type="checkbox"
               id="venuemanager"
               name="venuemanager"
               checked={venueManager}
-              onChange={(e) => setVenueManager(e.target.checked)}
+              onChange={(e) => setVenueManager(e.target.checked)} // Toggle venueManager state to true when checked
             />
           </div>
           <div className="flex justify-center p-3 mt-6">
@@ -183,7 +199,10 @@ const Modal = ({ onClose }) => {
           </div>
         </form>
         {message && <p className="text-red-500 text-sm mt-4">{message}</p>}
-        <button className="mt-4 text-sm mx-auto flex justify-center text-gray-600 hover:underline" onClick={onClose}>
+        <button
+          className="mt-4 text-sm mx-auto flex justify-center text-gray-600 hover:underline"
+          onClick={onClose}
+        >
           Cancel
         </button>
       </div>

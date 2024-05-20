@@ -1,42 +1,66 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchListings } from "../../lib/api";
+import { fetchVenues } from "../../lib/api";
 import Link from "next/link";
 
 const Home = () => {
-  const [listings, setListings] = useState([]);
+  const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState(null); // State for error handling
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const venuesPerPage = 100; // Number of venues per page
+
+  // Optional state to hold pagination meta information
+  const [paginationMeta, setPaginationMeta] = useState(null);
 
   useEffect(() => {
-    const getListings = async () => {
+    const getVenues = async () => {
       try {
-        const data = await fetchListings();
-        console.log(data)
-        setListings(data);
+        const data = await fetchVenues(currentPage, venuesPerPage);
+        setVenues(data.data); // Update venues state with fetched data
         setLoading(false);
+        setPaginationMeta(data.meta); // Update pagination meta
       } catch (error) {
         console.error(error);
         setLoading(false);
+        setError(error.message); // Set error message in state
       }
     };
 
-    getListings();
-  }, []);
+    getVenues();
+  }, [currentPage]); // Re-fetch on page change
 
   // Filter listings based on the search term
-  const filteredListings = listings.filter((listing) => {
-    return listing.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  const filteredVenues = venues?.filter((venue) => (
+    venue.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ));
+
+  // Pagination buttons (optional - implement logic for handling clicks)
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (paginationMeta && !paginationMeta.isLastPage) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <main>
       <div>
-        <h1>Listings</h1>
+        <h1>Venues</h1>
         {/* Search input field */}
         <input
           type="text"
@@ -45,28 +69,50 @@ const Home = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
         />
-        <div className="flex flex-wrap gap-8 p-4">
-          {filteredListings.map((listing) => (
-            <Link key={listing.id} href="/home/listingid/[id]" as={`/listingid/${listing.id}`}>
+        <div className="flex flex-wrap gap-6 p-4 justify-center">
+          {filteredVenues.map((venue) => (
+            <Link key={venue.id} href={`/listingid/${venue.id}`}>
               <div
-                key={listing.id}
-                className="venue-card flex flex-col flex-auto shadow bg-white cursor-pointer w-80"
+                key={venue.id}
+                className="venue-card flex flex-col flex-auto shadow bg-white cursor-pointer max-w-96 min-w-96 hover:shadow-md"
               >
-                {listing.media.length > 0 && (
+                {venue.media.length > 0 && (
                   <img
-                    src={listing.media[0].url}
-                    alt={listing.media[0].alt}
+                    src={venue.media[0].url}
+                    alt={venue.media[0].alt}
                     className="w-full h-40 object-cover"
                   />
                 )}
                 <div className="flex flex-col p-4">
-                  <h2>{listing.name}</h2>
-                  <p>{listing.description}</p>
+                  <h2>{venue.name}</h2>
                 </div>
               </div>
             </Link>
           ))}
         </div>
+
+        {/* Pagination (optional) */}
+        {paginationMeta && (
+          <div className="flex justify-between mt-4">
+            <button
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={handlePrevPage}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {paginationMeta.pageCount}
+            </span>
+            <button
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 disabled:opacity-50"
+              disabled={!paginationMeta || paginationMeta.isLastPage}
+              onClick={handleNextPage}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

@@ -1,37 +1,99 @@
-"use client";
 // ProfilePage.js
+
+"use client";
 import { useState, useEffect } from "react";
-import { fetchLoggedInProfile } from "../../lib/api"; // Import the fetchLoggedInProfile function
+import {
+  fetchLoggedInProfile,
+  fetchLoggedInProfileVenues,
+  deleteVenue,
+} from "../../lib/api";
+import VenueCard from "../VenueCard";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import EditVenueModal from "../EditVenueModal";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const accessToken = localStorage.getItem("accessToken");
-  const apiKey = localStorage.getItem("apiKey");
-  const userName = localStorage.getItem("name");
+  const [venues, setVenues] = useState([]);
+  const [currentVenueIndex, setCurrentVenueIndex] = useState(0);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const handleOpenEditModal = () => {
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+  };
 
   useEffect(() => {
-    // Retrieve accessToken and apiKey from localStorage
+    const fetchProfileAndVenues = async () => {
+      const accessToken = localStorage.getItem("accessToken");
+      const apiKey = localStorage.getItem("apiKey");
+      const userName = localStorage.getItem("name");
 
-    // Check if accessToken and apiKey are available
-    if (!accessToken || !apiKey) {
-      setError("Access token or API key not found");
-      setLoading(false);
-      return;
-    }
+      if (!accessToken || !apiKey) {
+        setLoading(false);
+        return;
+      }
 
-    // Fetch profile using accessToken and apiKey
-    fetchLoggedInProfile(accessToken, apiKey, userName)
-      .then((profileData) => {
+      try {
+        const profileData = await fetchLoggedInProfile(
+          accessToken,
+          apiKey,
+          userName
+        );
         setProfile(profileData);
-        setLoading(false);
-      })
-      .catch((error) => {
+
+        const venueData = await fetchLoggedInProfileVenues(
+          accessToken,
+          apiKey,
+          userName
+        );
+        setVenues(venueData);
+      } catch (error) {
         setError(error.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProfileAndVenues();
   }, []);
+
+  const handleDeleteVenue = async (venueId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this venue?"
+    );
+    if (confirmDelete) {
+      try {
+        await deleteVenue(venueId);
+
+        setVenues((prevVenues) =>
+          prevVenues.filter((venue) => venue.id !== venueId)
+        );
+
+        setCurrentVenueIndex((prevIndex) =>
+          prevIndex === venues.length - 1
+            ? Math.max(0, prevIndex - 1)
+            : prevIndex
+        );
+      } catch (error) {
+        setError(error.message);
+      }
+    }
+  };
+
+  const handleNextVenue = () => {
+    setCurrentVenueIndex((prevIndex) => (prevIndex + 1) % venues.length);
+  };
+
+  const handlePrevVenue = () => {
+    setCurrentVenueIndex((prevIndex) =>
+      prevIndex === 0 ? venues.length - 1 : prevIndex - 1
+    );
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -46,9 +108,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="profile-page">
-      <h1>Profile Page</h1>
-      <div className="profile-card w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-xl my-10 mx-10 dark:bg-gray-800 dark:border-gray-700">
+    <div className="profile-page flex flex-col p-8">
+      <div className="profile-card w-full max-h-72 max-w-sm bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
         <div className="flex justify-center p-5">
           <img
             src={profile.avatar.url || profile.avatar.file}
@@ -77,6 +138,33 @@ const ProfilePage = () => {
           </svg>
         </div>
       </div>
+
+      {venues.length > 0 && (
+        <div className="flex flex-col max-w-sm">
+          <h2 className="text-center py-4">Your venues:</h2>
+          <div className="venue-carousel flex items-center justify-between">
+            <button className="mr-4" onClick={handlePrevVenue}>
+              <FaChevronLeft className="carousel-icon" />
+            </button>
+            <div className="flex-grow">
+              <VenueCard
+                venue={venues[currentVenueIndex]}
+                onDelete={handleDeleteVenue}
+                onEdit={handleOpenEditModal}
+              />
+            </div>
+            <button className="ml-4" onClick={handleNextVenue}>
+              <FaChevronRight className="carousel-icon" />
+            </button>
+          </div>
+        </div>
+      )}
+      {showEditModal && (
+        <EditVenueModal
+          venue={venues[currentVenueIndex]}
+          onClose={handleCloseEditModal}
+        />
+      )}
     </div>
   );
 };
