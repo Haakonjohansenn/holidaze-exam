@@ -1,8 +1,7 @@
 import React from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
-const VenueCard = ({ venue, onDelete, onEdit }) => {
-
+const VenueCard = ({ venue, onDelete, onEdit, onViewBookings }) => {
   const handleDelete = () => {
     if (onDelete) {
       onDelete(venue.id);
@@ -12,6 +11,12 @@ const VenueCard = ({ venue, onDelete, onEdit }) => {
   const handleEdit = () => {
     if (onEdit) {
       onEdit(venue);
+    }
+  };
+
+  const handleViewBookings = () => {
+    if (onViewBookings) {
+      onViewBookings(venue.id);
     }
   };
 
@@ -38,6 +43,9 @@ const VenueCard = ({ venue, onDelete, onEdit }) => {
         <button onClick={handleDelete}>
           <FaTrash className="mr-2" />
           Delete
+        </button>
+        <button onClick={handleViewBookings}>
+          View Bookings
         </button>
       </div>
     </div>
