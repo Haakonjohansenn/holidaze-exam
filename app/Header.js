@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -34,20 +34,29 @@ export default function Header() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("name");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("apiKey");
     setIsLoggedIn(false);
+    setUserName(""); // Clear the username state
   };
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-  };
-
-  useEffect(() => {
-    // Fetch user's name from localStorage or API when logged in
     const user = localStorage.getItem("name");
     if (user) {
       setUserName(user);
     }
-  }, [isLoggedIn]);
+  };
+
+  useEffect(() => {
+    // Fetch user's name from localStorage when component mounts
+    const user = localStorage.getItem("name");
+    if (user) {
+      setUserName(user);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <header className="sticky top-0 p-6 bg-white border-b border-solid border-slate-300 shadow-md z-50 text-2xl sm:text-3xl md:text-4xl sm:p-8 flex items-center justify-between">
@@ -56,7 +65,7 @@ export default function Header() {
       </Link>
       <div className="relative grid cursor-pointer group place-items-center flex items-center">
         <div className="flex items-center rounded-xl border-solid border border-black p-2">
-          <div className="mr-4 text-sm">{userName}</div>
+          {userName && <div className="mr-4 text-sm">{userName}</div>}
           <DropdownMenu>
             <DropdownMenuTrigger>
               <RxHamburgerMenu size={25} />

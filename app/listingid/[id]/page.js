@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { fetchVenueById, createBooking, fetchBookingsForVenue } from "@/lib/api";
@@ -135,8 +135,8 @@ const VenuePage = () => {
           )}
           <h2 className="text-xl font-semibold mb-4">{venue.name}</h2>
           <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <label className="w-32">Check-in Date:</label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+              <label className="w-full sm:w-32">Check-in Date:</label>
               <input
                 type="text"
                 value={
@@ -146,18 +146,19 @@ const VenuePage = () => {
                 }
                 onFocus={handleCheckInFocus}
                 readOnly
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none"
+                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
               />
               {showCheckInCalendar && (
                 <Calendar
                   onChange={handleCheckInDateChange}
                   value={selectedCheckInDate}
                   tileDisabled={tileDisabled}
+                  className="calendar w-full"
                 />
               )}
             </div>
-            <div className="flex items-center space-x-4">
-              <label className="w-32">Check-out Date:</label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+              <label className="w-full sm:w-32">Check-out Date:</label>
               <input
                 type="text"
                 value={
@@ -167,23 +168,24 @@ const VenuePage = () => {
                 }
                 onFocus={handleCheckOutFocus}
                 readOnly
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none"
+                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
               />
               {showCheckOutCalendar && (
                 <Calendar
                   onChange={handleCheckOutDateChange}
                   value={selectedCheckOutDate}
                   tileDisabled={tileDisabled}
+                  className="calendar w-full"
                 />
               )}
             </div>
-            <div className="flex items-center space-x-4">
-              <label className="w-32">Number of Guests:</label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+              <label className="w-full sm:w-32">Number of Guests:</label>
               <input
                 type="number"
                 value={numGuests}
                 onChange={handleNumGuestsChange}
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none"
+                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
               />
             </div>
             <button
