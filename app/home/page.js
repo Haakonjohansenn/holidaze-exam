@@ -79,7 +79,7 @@ const Home = () => {
                   />
                 )}
                 <div className="flex flex-col p-4">
-                  <h2>{venue.name}</h2>
+                  <h2 className="truncate max-w-full">{venue.name}</h2>
                 </div>
               </div>
             </Link>
