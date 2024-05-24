@@ -19,11 +19,9 @@ const Home = () => {
       try {
         const data = await fetchVenues(currentPage, venuesPerPage);
         setVenues(data.data); // Update venues state with fetched data
-        setLoading(false);
         setPaginationMeta(data.meta); // Update pagination meta
       } catch (error) {
         console.error(error);
-        setLoading(false);
         setError(error.message); // Set error message in state
       }
     };
@@ -48,6 +46,7 @@ const Home = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+
 
   if (error) {
     return <div>Error: {error}</div>;
