@@ -17,6 +17,8 @@ const VenuePage = () => {
   const [showCheckInCalendar, setShowCheckInCalendar] = useState(false);
   const [showCheckOutCalendar, setShowCheckOutCalendar] = useState(false);
   const [existingBookings, setExistingBookings] = useState([]);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     const fetchVenueData = async () => {
@@ -69,10 +71,12 @@ const VenuePage = () => {
 
   const handleCheckInDateChange = (date) => {
     setSelectedCheckInDate(date);
+    setShowCheckInCalendar(false);
   };
 
   const handleCheckOutDateChange = (date) => {
     setSelectedCheckOutDate(date);
+    setShowCheckOutCalendar(false);
   };
 
   const handleNumGuestsChange = (event) => {
@@ -97,14 +101,15 @@ const VenuePage = () => {
       const response = await createBooking(bookingData);
 
       if (response && response.data) {
-        console.log("Booking confirmed successfully:", response.data);
-        // Handle success - maybe show a success message to the user
+        setSuccessMessage("Booking confirmed successfully.");
+        setErrorMessage(null);
       } else {
         throw new Error("Failed to confirm booking. Please try again later.");
       }
     } catch (error) {
       console.error("Error confirming booking:", error.message);
-      setError("Failed to confirm booking. Please try again later.");
+      setErrorMessage("Failed to confirm booking. Please try again later.");
+      setSuccessMessage(null);
     }
   };
 
@@ -123,20 +128,22 @@ const VenuePage = () => {
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
-        <div>Error: {error}</div>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          {error}
+        </div>
       ) : venue ? (
         <div className="max-w-lg mx-auto">
           {venue.media.length > 0 && (
             <img
               src={venue.media[0].url}
               alt={venue.media[0].alt}
-              className="w-full h-40 object-cover mb-4"
+              className="w-full h-40 object-cover mb-4 rounded-md"
             />
           )}
-          <h2 className="text-xl font-semibold mb-4">{venue.name}</h2>
+          <h2 className="text-2xl font-bold mb-4">{venue.name}</h2>
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-              <label className="w-full sm:w-32">Check-in Date:</label>
+              <label className="w-full sm:w-32 font-semibold">Check-in Date:</label>
               <input
                 type="text"
                 value={
@@ -146,19 +153,19 @@ const VenuePage = () => {
                 }
                 onFocus={handleCheckInFocus}
                 readOnly
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
+                className="border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none w-full sm:w-auto"
               />
               {showCheckInCalendar && (
                 <Calendar
                   onChange={handleCheckInDateChange}
                   value={selectedCheckInDate}
                   tileDisabled={tileDisabled}
-                  className="calendar w-full"
+                  className="calendar mt-2 w-full sm:w-auto shadow-lg rounded-md"
                 />
               )}
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-              <label className="w-full sm:w-32">Check-out Date:</label>
+              <label className="w-full sm:w-32 font-semibold">Check-out Date:</label>
               <input
                 type="text"
                 value={
@@ -168,33 +175,44 @@ const VenuePage = () => {
                 }
                 onFocus={handleCheckOutFocus}
                 readOnly
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
+                className="border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none w-full sm:w-auto"
               />
               {showCheckOutCalendar && (
                 <Calendar
                   onChange={handleCheckOutDateChange}
                   value={selectedCheckOutDate}
                   tileDisabled={tileDisabled}
-                  className="calendar w-full"
+                  className="calendar mt-2 w-full sm:w-auto shadow-lg rounded-md"
                 />
               )}
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-              <label className="w-full sm:w-32">Number of Guests:</label>
+              <label className="w-full sm:w-32 font-semibold">Number of Guests:</label>
               <input
                 type="number"
                 value={numGuests}
                 onChange={handleNumGuestsChange}
-                className="border border-gray-300 px-2 py-1 rounded focus:outline-none w-full sm:w-auto"
+                className="border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none w-full sm:w-auto"
+                min="1"
               />
             </div>
             <button
               type="button"
               onClick={handleConfirmBooking}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
+              className="bg-cta-color text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none"
             >
               Confirm Booking
             </button>
+            {successMessage && (
+              <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                {successMessage}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                {errorMessage}
+              </div>
+            )}
           </div>
         </div>
       ) : (
