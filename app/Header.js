@@ -76,7 +76,7 @@ export default function Header() {
               {isLoggedIn && (
                 <>
                   <Link href="/profile"><DropdownMenuItem>Profile</DropdownMenuItem></Link>
-                  <DropdownMenuItem>My venues</DropdownMenuItem>
+                  <Link href="/profile"><DropdownMenuItem>My venues</DropdownMenuItem></Link>
                   <DropdownMenuItem onClick={toggleVenueModal}>Create venue</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </>

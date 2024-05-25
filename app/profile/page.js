@@ -130,7 +130,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="profile-page flex flex-col lg:flex-row p-8 gap-8">
+    <div className="profile-page flex flex-col justify-center lg:flex-row p-8 gap-60">
       <div className="left-section flex flex-col gap-8">
         <div className="profile-card w-full max-h-72 max-w-sm bg-white border border-gray-200 rounded-lg shadow-xl dark:bg-gray-800 dark:border-gray-700">
           <div className="flex justify-center p-5">
