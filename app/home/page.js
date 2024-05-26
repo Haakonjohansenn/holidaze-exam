@@ -9,13 +9,14 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null); // State for error handling
   const [currentPage, setCurrentPage] = useState(1); // Track current page
-  const venuesPerPage = 100; // Number of venues per page
+  const venuesPerPage = 30; // Number of venues per page
 
   // Optional state to hold pagination meta information
   const [paginationMeta, setPaginationMeta] = useState(null);
 
   useEffect(() => {
     const getVenues = async () => {
+      setLoading(true);
       try {
         const data = await fetchVenues(currentPage, venuesPerPage);
         setVenues(data.data); // Update venues state with fetched data
@@ -23,6 +24,8 @@ const Home = () => {
       } catch (error) {
         console.error(error);
         setError(error.message); // Set error message in state
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -34,7 +37,7 @@ const Home = () => {
     venue.name.toLowerCase().includes(searchTerm.toLowerCase())
   ));
 
-  // Pagination buttons (optional - implement logic for handling clicks)
+  // Pagination buttons
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -47,6 +50,9 @@ const Home = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -86,7 +92,7 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Pagination (optional) */}
+        {/* Pagination */}
         {paginationMeta && (
           <div className="flex justify-between mt-4">
             <button
